@@ -1,0 +1,35 @@
+server {
+  listen 80;
+  server_name ${PORTFOLIO_HOST};
+
+  location ^~ /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
+}
+
+server {
+  listen 443 ssl;
+  server_name ${PORTFOLIO_HOST};
+  client_max_body_size 100m;
+
+  ssl_certificate /etc/letsencrypt/live/catalogo.kangaroo-tech.net/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/catalogo.kangaroo-tech.net/privkey.pem;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 1d;
+
+  location /api/ {
+    proxy_pass http://portfolio-api:3001/;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location / {
+    proxy_pass http://portfolio-web:3000;
+    include /etc/nginx/includes/proxy.conf;
+  }
+}
+

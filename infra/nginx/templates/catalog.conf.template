@@ -1,0 +1,36 @@
+limit_req_zone $binary_remote_addr zone=catalog_assistant:10m rate=5r/m;
+limit_req_zone $binary_remote_addr zone=catalog_login:10m rate=5r/m;
+
+server {
+  listen 80;
+  server_name ${CATALOG_HOST};
+  client_max_body_size 20m;
+
+  location ^~ /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location = /api/catalog/assistant/ask {
+    limit_req zone=catalog_assistant burst=2 nodelay;
+    limit_req_status 429;
+    proxy_pass http://catalog-api:3001/api/catalog/assistant/ask;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location = /api/auth/login {
+    limit_req zone=catalog_login burst=2 nodelay;
+    limit_req_status 429;
+    proxy_pass http://catalog-api:3001/api/auth/login;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location /api/ {
+    proxy_pass http://catalog-api:3001/api/;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location / {
+    proxy_pass http://catalog-web:3000;
+    include /etc/nginx/includes/proxy.conf;
+  }
+}

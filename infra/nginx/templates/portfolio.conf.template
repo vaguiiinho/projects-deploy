@@ -1,0 +1,19 @@
+server {
+  listen 80;
+  server_name ${PORTFOLIO_HOST};
+  client_max_body_size 100m;
+
+  location ^~ /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location /api/ {
+    proxy_pass http://portfolio-api:3001/;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location / {
+    proxy_pass http://portfolio-web:3000;
+    include /etc/nginx/includes/proxy.conf;
+  }
+}

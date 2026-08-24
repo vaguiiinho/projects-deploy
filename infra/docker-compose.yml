@@ -1,0 +1,49 @@
+name: projects-infra
+
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: projects-nginx
+    restart: unless-stopped
+    environment:
+      CATALOG_HOST: ${CATALOG_HOST}
+      STORE_HOST: ${STORE_HOST}
+      PORTFOLIO_HOST: ${PORTFOLIO_HOST}
+      NGINX_ENVSUBST_FILTER: ^(CATALOG_HOST|STORE_HOST|PORTFOLIO_HOST)$
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - ./nginx/includes:/etc/nginx/includes:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certbot/www:/var/www/certbot:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - proxy
+
+  certbot:
+    image: certbot/certbot:v5.5.0
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+
+  certbot-renew:
+    image: certbot/certbot:v5.5.0
+    restart: unless-stopped
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - trap exit TERM; while :; do certbot renew --webroot --webroot-path /var/www/certbot --quiet; sleep 12h & wait $$!; done
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+
+networks:
+  proxy:
+    name: projects-deploy-proxy
+    driver: bridge
