@@ -21,7 +21,7 @@ services:
       - catalog_private
 
   api:
-    image: vaguiiinho/product-catalog-api:1.0.0
+    image: vaguiiinho/product-catalog-api:1.0.2
     container_name: catalog-api
     restart: unless-stopped
     depends_on:
@@ -50,7 +50,7 @@ services:
           - catalog-api
 
   web:
-    image: vaguiiinho/product-catalog-web:1.0.0
+    image: vaguiiinho/product-catalog-web:1.0.2
     container_name: catalog-web
     restart: unless-stopped
     depends_on:
@@ -72,7 +72,7 @@ services:
           - catalog-web
 
   worker:
-    image: vaguiiinho/product-catalog-worker:1.0.0
+    image: vaguiiinho/product-catalog-worker:1.0.2
     container_name: catalog-worker
     depends_on:
       api:
