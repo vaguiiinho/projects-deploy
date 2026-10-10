@@ -21,7 +21,7 @@ services:
       - store_private
 
   api:
-    image: vaguiiinho/store-api:1.0.0
+    image: vaguiiinho/store-api:1.0.2
     container_name: store-api
     restart: unless-stopped
     depends_on:
@@ -57,7 +57,7 @@ services:
           - store-api
 
   web:
-    image: vaguiiinho/store-web:1.0.0
+    image: vaguiiinho/store-web:1.0.2
     container_name: store-web
     restart: unless-stopped
     depends_on:
