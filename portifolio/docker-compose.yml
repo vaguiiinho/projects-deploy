@@ -21,7 +21,7 @@ services:
       - portfolio_private
 
   api:
-    image: vaguiiinho/portfolio-api:1.0.0
+    image: vaguiiinho/portfolio-api:1.0.2
     container_name: portfolio-api
     restart: unless-stopped
     depends_on:
@@ -52,7 +52,7 @@ services:
           - portfolio-api
 
   web:
-    image: vaguiiinho/portfolio-web:1.0.0
+    image: vaguiiinho/portfolio-web:1.0.2
     container_name: portfolio-web
     restart: unless-stopped
     depends_on:
