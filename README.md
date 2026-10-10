@@ -74,7 +74,7 @@ docker compose -f store/docker-compose.yml up -d
 
 Rode o seed:
 ```sh
-docker exec -it 07153296893e node seed-dist/prisma/seed.js
+docker exec -it 07153296893e node seed-dist/prisma/seed.js --count=50
 ```
 
 Suba o Nginx HTTP para o desafio ACME:
