@@ -1,0 +1,19 @@
+server {
+  listen 80;
+  server_name ${FINANCE_HOST};
+  client_max_body_size 100m;
+
+  location ^~ /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location /api/ {
+    proxy_pass http://finance-api:3001/;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location / {
+    proxy_pass http://finance-web:3000;
+    include /etc/nginx/includes/proxy.conf;
+  }
+}

@@ -1,0 +1,83 @@
+name: store
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: store-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - store_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - finance_private
+
+  api:
+    image: vaguiiinho/finance-api
+    container_name: finance-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      APP_URL: ${PUBLIC_ORIGIN}
+      AUTH_SECRET: ${AUTH_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      finance_private: {}
+      proxy:
+        aliases:
+          - finance-api
+
+  web:
+    image: vaguiiinho/finance-web
+    container_name: finance-web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      API_URL: http://finance-api:3001/api
+      NEXT_PUBLIC_API_URL: /api
+      NEXT_PUBLIC_APP_URL: ${PUBLIC_ORIGIN}
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      proxy:
+        aliases:
+          - finance-web
+
+networks:
+  finance_private:
+    name: finance-private
+  proxy:
+    external: true
+    name: projects-deploy-proxy
+
+volumes:
+  finance_postgres_data:
+    name: finance-postgres-data
+
