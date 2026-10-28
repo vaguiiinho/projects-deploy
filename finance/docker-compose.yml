@@ -5,10 +5,8 @@ services:
     image: postgres:17-alpine
     container_name: finance-postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+    env_file:
+      - ./.env
     volumes:
       - finance_postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -27,14 +25,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3001
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
-      APP_URL: ${PUBLIC_ORIGIN}
-      AUTH_SECRET: ${AUTH_SECRET}
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    env_file:
+      - ./.env
     healthcheck:
       test: ["CMD", "node", "healthcheck.js"]
       interval: 30s
@@ -54,11 +46,8 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      API_URL: http://finance-api:3001/api
-      NEXT_PUBLIC_API_URL: /api
-      NEXT_PUBLIC_APP_URL: ${PUBLIC_ORIGIN}
+    env_file:
+      - ./.env
     healthcheck:
       test: ["CMD", "node", "healthcheck.js"]
       interval: 30s
