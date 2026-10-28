@@ -21,7 +21,7 @@ services:
       - finance_private
 
   api:
-    image: vaguiiinho/finance-api
+    image: vaguiiinho/finance-api:1.0.0
     container_name: finance-api
     restart: unless-stopped
     depends_on:
@@ -52,7 +52,7 @@ services:
           - finance-api
 
   web:
-    image: vaguiiinho/finance-web
+    image: vaguiiinho/finance-web:1.0.0
     container_name: finance-web
     restart: unless-stopped
     depends_on:
