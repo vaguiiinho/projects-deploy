@@ -31,14 +31,6 @@ services:
       NODE_ENV: ${APP_NODE_ENV}
       PORT: 3001
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      CORS_ORIGIN: ${PUBLIC_ORIGIN}
-      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET}
-      AUTH_JWT_EXPIRES_IN_SECONDS: ${AUTH_JWT_EXPIRES_IN_SECONDS}
-      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE}
-      AUTH_COOKIE_SAME_SITE: ${AUTH_COOKIE_SAME_SITE}
-      AUTH_COOKIE_DOMAIN: ${AUTH_COOKIE_DOMAIN:-}
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     healthcheck:
       test: ["CMD", "node", "healthcheck.js"]
       interval: 30s
@@ -56,8 +48,8 @@ services:
     container_name: finance-web
     restart: unless-stopped
     environment:
-      NODE_ENV: ${APP_NODE_ENV}
-      API_INTERNAL_URL: http://finance-api:3001
+      NODE_ENV: production
+      API_URL: http://finance-api:3001
     healthcheck:
       test: ["CMD", "node", "healthcheck.js"]
       interval: 30s
