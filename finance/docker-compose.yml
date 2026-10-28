@@ -55,9 +55,6 @@ services:
     image: vaguiiinho/finance-web:1.0.0
     container_name: finance-web
     restart: unless-stopped
-    depends_on:
-      api:
-        condition: service_healthy
     environment:
       NODE_ENV: ${APP_NODE_ENV}
       API_INTERNAL_URL: http://finance-api:3001
