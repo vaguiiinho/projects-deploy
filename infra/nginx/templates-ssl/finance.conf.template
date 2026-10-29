@@ -16,8 +16,8 @@ server {
   server_name ${FINANCE_HOST};
   client_max_body_size 100m;
 
-  ssl_certificate /etc/letsencrypt/live/catalogo.kangaroo-tech.net/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/catalogo.kangaroo-tech.net/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/finance.kangaroo-tech.net/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/finance.kangaroo-tech.net/privkey.pem;
   ssl_protocols TLSv1.2 TLSv1.3;
   ssl_session_cache shared:SSL:10m;
   ssl_session_timeout 1d;
