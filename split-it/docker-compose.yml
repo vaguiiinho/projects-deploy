@@ -1,0 +1,54 @@
+name: split
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: split-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - split_postgres_data:/var/lib/postgresql/data
+    networks:
+      - split-private
+
+  api:
+    image: vaguiiinho/let-split-it-api:1.0.3
+    container_name: split-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: ${DATABASE_URL}
+    networks:
+      split-private: {}
+      proxy:
+        aliases:
+          - split-api
+
+  web:
+    image: vaguiiinho/let-split-it-web:1.0.3
+    container_name: split-web
+    restart: unless-stopped
+    environment:
+      API_URL: ${API_URL}
+      PORT: 3000
+    networks:
+      split-private: {}
+      proxy:
+        aliases:
+          - split-web
+
+networks:
+  split-private: # <-- Corrigido de split_private para split-private
+    name: split-private
+  proxy:
+    external: true
+    name: projects-deploy-proxy
+
+volumes:
+  split_postgres_data:
+    name: split_postgres_data
+

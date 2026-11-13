@@ -1,0 +1,19 @@
+server {
+  listen 80;
+  server_name ${SPLIT_HOST};
+  client_max_body_size 100m;
+
+  location ^~ /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location /api/ {
+    proxy_pass http://split-api:3333/;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location / {
+    proxy_pass http://split-web:3000;
+    include /etc/nginx/includes/proxy.conf;
+  }
+}
