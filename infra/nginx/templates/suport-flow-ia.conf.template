@@ -1,0 +1,24 @@
+server {
+  listen 80;
+  server_name ${SUPORT_HOST};
+  client_max_body_size 20m;
+
+  location ^~ /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location /api/ {
+    proxy_pass http://suport-flow-ia:3001/api/;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location / {
+    proxy_pass http://suport-flow-ia:3000;
+    include /etc/nginx/includes/proxy.conf;
+  }
+
+  location = /worker/health {
+    proxy_pass http://worker:3002/health;
+    include /etc/nginx/includes/proxy.conf;
+  }
+}
