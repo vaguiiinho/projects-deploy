@@ -8,17 +8,17 @@ server {
   }
 
   location /api/ {
-    proxy_pass http://suport-flow-ia:3001/api/;
+    proxy_pass http://suport-flow-ia-api:3001/api/;
     include /etc/nginx/includes/proxy.conf;
   }
 
   location / {
-    proxy_pass http://suport-flow-ia:3000;
+    proxy_pass http://suport-flow-ia-web:3000;
     include /etc/nginx/includes/proxy.conf;
   }
 
   location = /worker/health {
-    proxy_pass http://worker:3002/health;
+    proxy_pass http://suport-flow-ia-worker:3002/health;
     include /etc/nginx/includes/proxy.conf;
   }
 }
