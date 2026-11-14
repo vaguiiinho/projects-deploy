@@ -9,6 +9,9 @@ um unico Nginx reverso com certificados Let's Encrypt.
 - `https://catalogo.kangaroo-tech.net`
 - `https://loja.kangaroo-tech.net`
 - `https://portfolio.kangaroo-tech.net`
+- `https://finance.kangaroo-tech.net`
+- `https://suport-flow-ia.kangaroo-tech.net`
+- `https://split.kangaroo-tech.net`
 
 ## Arquitetura
 
@@ -96,9 +99,13 @@ printf 'acme-ok\n' > infra/certbot/www/.well-known/acme-challenge/teste
 curl http://catalogo.kangaroo-tech.net/.well-known/acme-challenge/teste
 curl http://loja.kangaroo-tech.net/.well-known/acme-challenge/teste
 curl http://portfolio.kangaroo-tech.net/.well-known/acme-challenge/teste
+curl http://finance.kangaroo-tech.net/.well-known/acme-challenge/teste
+curl http://suport-flow-ia.kangaroo-tech.net/.well-known/acme-challenge/teste
+curl http://split.kangaroo-tech.net/.well-known/acme-challenge/teste
 ```
 
-Os tres comandos precisam retornar `acme-ok`. Depois emita um certificado SAN:
+Todos os comandos precisam retornar `acme-ok`. Emita o certificado SAN dos
+sites catalogo, loja e portfolio:
 
 ```sh
 docker compose -f infra/docker-compose.yml run --rm certbot certonly \
@@ -110,6 +117,26 @@ docker compose -f infra/docker-compose.yml run --rm certbot certonly \
   -d catalogo.kangaroo-tech.net \
   -d loja.kangaroo-tech.net \
   -d portfolio.kangaroo-tech.net
+```
+
+Emita tambem um certificado para cada um dos outros hosts, pois os templates
+SSL esperam um certificado separado para cada dominio:
+
+```sh
+docker compose -f infra/docker-compose.yml run --rm certbot certonly \
+  --webroot --webroot-path /var/www/certbot \
+  --email vaguiiinho5@gmail.com --agree-tos --no-eff-email \
+  -d finance.kangaroo-tech.net
+
+docker compose -f infra/docker-compose.yml run --rm certbot certonly \
+  --webroot --webroot-path /var/www/certbot \
+  --email vaguiiinho5@gmail.com --agree-tos --no-eff-email \
+  -d suport-flow-ia.kangaroo-tech.net
+
+docker compose -f infra/docker-compose.yml run --rm certbot certonly \
+  --webroot --webroot-path /var/www/certbot \
+  --email vaguiiinho5@gmail.com --agree-tos --no-eff-email \
+  -d split.kangaroo-tech.net
 ```
 
 Somente depois de `Successfully received certificate`, ative HTTPS:
