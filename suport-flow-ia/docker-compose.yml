@@ -44,13 +44,10 @@ services:
 
   worker:
     image: vaguiiinho/suport-flow-ia-worker:latest
-    build:
-      context: .
-      dockerfile: apps/worker/Dockerfile
     env_file:
       - ./.env
     volumes:
-      - knowledge_files:/app/uploads
+      - knowledge_files:/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -68,11 +65,6 @@ services:
 
   web:
     image: vaguiiinho/suport-flow-ia-web:latest
-    build:
-      context: .
-      dockerfile: apps/web/Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api/v1}
     env_file:
       - ./.env
     depends_on:
