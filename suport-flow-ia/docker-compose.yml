@@ -19,10 +19,7 @@ services:
       - suporte-flow-ia-private
 
   api:
-    image: ${DOCKER_HUB_USERNAME:-local}/suporte-flow-ia-api:${IMAGE_TAG:-latest}
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
+    image: vaguiiinho/suporte-flow-ia-api:latest
     env_file:
       - ./.env
     volumes:
@@ -46,7 +43,7 @@ services:
           - suporte-flow-ia-api
 
   worker:
-    image: ${DOCKER_HUB_USERNAME:-local}/suporte-flow-ia-worker:${IMAGE_TAG:-latest}
+    image: vaguiiinho/suporte-flow-ia-worker:latest
     build:
       context: .
       dockerfile: apps/worker/Dockerfile
@@ -70,7 +67,7 @@ services:
       - suporte-flow-ia-private
 
   web:
-    image: ${DOCKER_HUB_USERNAME:-local}/suporte-flow-ia-web:${IMAGE_TAG:-latest}
+    image: vaguiiinho/suporte-flow-ia-web:latest
     build:
       context: .
       dockerfile: apps/web/Dockerfile
