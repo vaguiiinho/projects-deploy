@@ -61,7 +61,10 @@ services:
       start_period: 10s
     restart: unless-stopped
     networks:
-      - suport-flow-ia-private
+      suport-flow-ia-private: {}
+      proxy:
+        aliases:
+          - suport-flow-ia-worker
 
   web:
     image: vaguiiinho/suport-flow-ia-web:latest
